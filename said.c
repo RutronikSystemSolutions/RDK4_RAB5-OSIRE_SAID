@@ -466,42 +466,26 @@ void parallel (void)
 
 }
 
+/* Sets THE PWM of both E5515 LEDs*/
 void PWM(void)
 {
-
 	  uint16_t          last;
 	  uint8_t           temp;
 	  uint8_t           stat;
 	  uint8_t           flags;
-	  uint16_t			pwm = 0x0080;
+	  uint16_t			pwm = 0x3FFF;
 	  uint8_t           com;
-
 
 	  osp2_exec_reset();
 	  osp2_send_initbidir(1,&last,&temp,&stat);
 	  osp2_send_clrerror(0);
 	  osp2_send_goactive(0);
-
-
-
 	  osp2_send_setsetup(RAB5_SAID_ADDR, OSP2_SETUP_FLAGS_OSIRE_DFLT | OSP2_SETUP_FLAGS_CRCEN | OSP2_SETUP_FLAGS_LOS);
-//	  osp2_send_setsetup(2, OSP2_SETUP_FLAGS_SAID_DFLT  | OSP2_SETUP_FLAGS_CRCEN | OSP2_SETUP_FLAGS_LOS);
-
-	  //osp2_send_setsetup(1, OSP2_SETUP_FLAGS_OSIRE_DFLT | OSP2_SETUP_FLAGS_CRCEN );
-	  //osp2_send_setsetup(2, OSP2_SETUP_FLAGS_SAID_DFLT  | OSP2_SETUP_FLAGS_CRCEN );
-
 	  osp2_send_readsetup(RAB5_SAID_ADDR,&flags );
-//	  osp2_send_readsetup(2,&flags );
-
-
 	  osp2_send_setpwm   (RAB5_SAID_ADDR,  0x0080,0x0002,0x0020,0b000);
-	  //osp2_send_setpwmchn(2,0,0x0080,pwm,pwm);
-	  //osp2_send_setpwmchn(2,1,pwm,pwm,pwm);
-	  osp2_send_setpwmchn(RAB5_SAID_ADDR,0,pwm,0x0200,pwm);
-	  osp2_send_setpwmchn(RAB5_SAID_ADDR,1,pwm,0x0200,pwm);
-	  //osp2_send_setpwmchn(2,2,0x0200,0x0200,0x0200);
+	  osp2_send_setpwmchn(RAB5_SAID_ADDR,0,pwm,pwm,pwm);
+	  osp2_send_setpwmchn(RAB5_SAID_ADDR,1,pwm,pwm,pwm);
 	  osp2_send_readstat(RAB5_SAID_ADDR, &stat);
-//	  osp2_send_readstat(2, &stat);
 	  osp2_send_readcomst(RAB5_SAID_ADDR, &com);
 }
 
