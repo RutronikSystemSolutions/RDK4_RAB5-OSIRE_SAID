@@ -191,6 +191,10 @@ void sidelookers_animate(void)
 	static _Bool init = false;
 	static int chn=0;
 	static int col=0;
+	uint8_t flags;
+	uint8_t rcur;
+	uint8_t gcur;
+	uint8_t bcur;
 	uint16_t last;
 	uint8_t stat,temp;
 
@@ -198,12 +202,36 @@ void sidelookers_animate(void)
   {
 	  osp2_exec_reset();
 	  osp2_send_initbidir(1,&last,&temp,&stat);
+
+	  // cur   0    1    2    3    4
+	  // chn0  3mA  6mA 12mA 24mA 48mA
+	  // chn1 1.5mA 3mA  6mA 12mA 24mA
+	  // chn2 1.5mA 3mA  6mA 12mA 24mA
+
+	  /* Set LED4 current (channel 0) - 48mA (maximum)*/
+	  flags = 0;
+	  rcur = 4;
+	  gcur = 4;
+	  bcur = 4;
+	  osp2_send_setcurchn(3, 0, flags, rcur, gcur, bcur);
+
+	  /*Set LED3 current (channel 1) - 24mA (maximum)*/
+	  flags = 0;
+	  rcur = 4;
+	  gcur = 4;
+	  bcur = 4;
+	  osp2_send_setcurchn(3, 1, flags, rcur, gcur, bcur);
+
+	  /* Every SAID boots with over voltage, clear that flag */
 	  osp2_send_clrerror(0);
-	  osp2_send_readstat(3, &stat); // Every SAID boots with over voltage, clear that flag
-	  osp2_send_goactive(0);
+	  osp2_send_readstat(3, &stat);
+
+	  /*Activate the SAID*/
+	  osp2_send_goactive(3);
 	  init = true;
   }
 
+  /*Animation*/
   if(chn<2)
   {
 	  if(col<3)
