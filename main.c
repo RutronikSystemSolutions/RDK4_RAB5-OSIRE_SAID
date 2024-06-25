@@ -70,14 +70,14 @@ int main(void)
 	init_sys();
 
 	/* Initial demo*/
-	PWM();
+	said();
 
 	/*Main loop*/
 	for (;;)
 	{
+		anim();
 		sbc_rab5_osire_check_wdt();
-		Cy_SysLib_Delay(500);
-
+		Cy_SysLib_Delay(100);
 	}
 }
 

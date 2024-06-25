@@ -15,7 +15,7 @@
 #include <amsOsram_sources/Hal/CY_Gpios/inc/pin.h>
 
 // Tests several of the basic SAID features
-void said()
+void said(void)
 {
   osp2_error_t      err;
   uint16_t          last;
@@ -35,101 +35,160 @@ void said()
 
   err = 0;
 
-  printf("\nASSUMPTION: MCU-OSIRE-SAID(RGB,RGB,RGB)-OSIRE-MCU\n");
-  printf("\nINIT\n");
+  printf("\n\rASSUMPTION: MCU-OSIRE-OSIRE-SAID(RGB,RGB,I2C)-OSIRE-OSIRE\n\r");
+  printf("\n\rINIT\n\r");
+
   err|=osp2_exec_reset();
-  //err|=osp2_send_initloop(1,&last,&temp,&stat);
+  if(err)
+  {
+	  printf("reset command fail.\n\r");
+	  goto exit_with_error;
+  }
   err|=osp2_send_initbidir(1,&last,&temp,&stat);
+  if(err)
+  {
+	  printf("initbidir command fail.\n\r");
+	  goto exit_with_error;
+  }
 
-  //osp2_exec_otpdump(2);
-  //err|=osp2_send_readotp(2,0x0D,buf,1);
+  /*Making sure we have RAB5-OSIRE mounted*/
+  if(last < 5)
+  {
+	  printf("RAB5-OSIRE adapter board not detected.\n\r");
+	  goto exit_with_error;
+  }
+  else
+  {
+	  osp2_send_identify(3,&id);
+	  if(id != 0x40)
+	  {
+		  printf("RAB5-OSIRE adapter board not detected.\n\r");
+		  goto exit_with_error;
+	  }
+  }
 
-  printf("\nSETUP (enable CRC)\n");
+  printf("\n\rSETUP (enable CRC)\n\r");
   err|=osp2_send_setsetup(1, OSP2_SETUP_FLAGS_OSIRE_DFLT | OSP2_SETUP_FLAGS_CRCEN );
-  err|=osp2_send_setsetup(2, OSP2_SETUP_FLAGS_SAID_DFLT  | OSP2_SETUP_FLAGS_CRCEN );
-  err|=osp2_send_setsetup(3, OSP2_SETUP_FLAGS_OSIRE_DFLT | OSP2_SETUP_FLAGS_CRCEN );
+  err|=osp2_send_setsetup(2, OSP2_SETUP_FLAGS_OSIRE_DFLT | OSP2_SETUP_FLAGS_CRCEN );
+  err|=osp2_send_setsetup(3, OSP2_SETUP_FLAGS_SAID_DFLT  | OSP2_SETUP_FLAGS_CRCEN );
+  err|=osp2_send_setsetup(4, OSP2_SETUP_FLAGS_OSIRE_DFLT | OSP2_SETUP_FLAGS_CRCEN );
+  err|=osp2_send_setsetup(5, OSP2_SETUP_FLAGS_OSIRE_DFLT | OSP2_SETUP_FLAGS_CRCEN );
   err|=osp2_send_readsetup(1,&flags );
+  printf("Device 1 setup flags: 0x%2X\n\r", flags);
   err|=osp2_send_readsetup(2,&flags );
+  printf("Device 2 setup flags: 0x%2X\n\r", flags);
   err|=osp2_send_readsetup(3,&flags );
+  printf("Device 3 setup flags: 0x%2X\n\r", flags);
+  err|=osp2_send_readsetup(4,&flags );
+  printf("Device 4 setup flags: 0x%2X\n\r", flags);
+  err|=osp2_send_readsetup(5,&flags );
+  printf("Device 5 setup flags: 0x%2X\n\r", flags);
 
-  printf("\nSTATUS CHECK\n");
+  printf("\n\rSTATUS CHECK\n\r");
   err|=osp2_send_clrerror(0); // all SAIDs have the V flag (overvoltage) after reset, clear those
-  err|=osp2_send_readtempstat(1, &temp, &stat);
-  err|=osp2_send_readtempstat(2, &temp, &stat);
   err|=osp2_send_readtempstat(3, &temp, &stat);
 
-  printf("\nID'S\n");
-  err|=osp2_send_readotp(2,0x00,buf,3);
+  printf("\n\rID'S\n\r");
+  err|=osp2_send_readotp(3,0x00,buf,3);
   err|=osp2_send_identify(1,&id);
+  printf("Device 1 ID: 0x%2X\n\r", (unsigned int)id);
   err|=osp2_send_identify(2,&id);
+  printf("Device 2 ID: 0x%2X\n\r", (unsigned int)id);
   err|=osp2_send_identify(3,&id);
+  printf("Device 3 ID: 0x%2X\n\r", (unsigned int)id);
+  err|=osp2_send_identify(4,&id);
+  printf("Device 4 ID: 0x%2X\n\r", (unsigned int)id);
+  err|=osp2_send_identify(5,&id);
+  printf("Device 5 ID: 0x%2X\n\r", (unsigned int)id);
 
-  printf("\nPWM ON\n");
+  printf("\n\rPWM ON\n\r");
   err|=osp2_send_setpwm   (1,  0x0200,0x0002,0x0020,0b000);
-  err|=osp2_send_setpwmchn(2,0,0x3333,0x2222,0x1111);
-  err|=osp2_send_setpwmchn(2,1,0x0000,0x0000,0x1112);
-  err|=osp2_send_setpwmchn(2,2,0x1000,0x0000,0x0000);
-  err|=osp2_send_setpwm   (3,  0x0200,0x0002,0x0020,0b111);
+  err|=osp2_send_setpwm   (2,  0x0200,0x0002,0x0020,0b000);
+  err|=osp2_send_setpwmchn(3,0,0x3333,0x2222,0x1111);
+  err|=osp2_send_setpwmchn(3,1,0x3333,0x2222,0x1111);
+  err|=osp2_send_setpwm   (4,  0x0200,0x0002,0x0020,0b000);
+  err|=osp2_send_setpwm   (5,  0x0200,0x0002,0x0020,0b000);
 
   err|=osp2_send_readpwm(1,&red, &green, &blue, &daytimes );
-  err|=osp2_send_readpwmchn(2,0, &red, &green, &blue );
-  err|=osp2_send_readpwmchn(2,1, &red, &green, &blue );
-  err|=osp2_send_readpwmchn(2,2, &red, &green, &blue );
-  err|=osp2_send_readpwm(3,&red, &green, &blue, &daytimes );
+  err|=osp2_send_readpwm(2,&red, &green, &blue, &daytimes );
+  err|=osp2_send_readpwmchn(3,0, &red, &green, &blue );
+  err|=osp2_send_readpwmchn(3,1, &red, &green, &blue );
+  err|=osp2_send_readpwm(4,&red, &green, &blue, &daytimes );
+  err|=osp2_send_readpwm(5,&red, &green, &blue, &daytimes );
 
   err|=osp2_send_goactive(0);
 
-
-  printf("\nSYNC\n");
-  err|=osp2_send_readcurchn(2,1, &flags, &rcur, &gcur, &bcur);
-  err|=osp2_send_setcurchn(2,1, OSP2_CURCHN_FLAGS_SYNCEN, 0, 0, 0);
-  err|=osp2_send_setpwmchn(2,1, 0x0000,0x1112,0x0000); // swap blue to green
+  printf("\n\rSYNC\n\r");
+  err|=osp2_send_readcurchn(3,1, &flags, &rcur, &gcur, &bcur);
+  err|=osp2_send_setcurchn(3,1, OSP2_CURCHN_FLAGS_SYNCEN, 0, 0, 0);
+  err|=osp2_send_setpwmchn(3,1, 0x3333,0x2222,0x1111); // swap blue to green
   err|=osp2_send_sync(0);
 
-  printf("\nTEMP\n");
+  printf("\n\rTEMP\n\r");
   err|=osp2_send_readtemp(1, &temp);
+  printf("Device 1 Temperature Register: %d\n\r", temp);
   err|=osp2_send_readtemp(2, &temp);
+  printf("Device 2 Temperature Register: %d\n\r", temp);
   err|=osp2_send_readtemp(3, &temp);
+  printf("Device 3 Temperature Register: %d\n\r", temp);
+  err|=osp2_send_readtemp(4, &temp);
+  printf("Device 4 Temperature Register: %d\n\r", temp);
+  err|=osp2_send_readtemp(5, &temp);
+  printf("Device 5 Temperature Register: %d\n\r", temp);
 
-  printf("\nCOM STATUS\n");
+  printf("\n\rCOM STATUS\n\r");
   err|=osp2_send_readcomst(1, &com);
+  printf("Device 1 com status: %d\n\r", com);
   err|=osp2_send_readcomst(2, &com);
+  printf("Device 2 com status: %d\n\r", com);
   err|=osp2_send_readcomst(3, &com);
+  printf("Device 3 com status: %d\n\r", com);
+  err|=osp2_send_readcomst(4, &com);
+  printf("Device 4 com status: %d\n\r", com);
+  err|=osp2_send_readcomst(5, &com);
+  printf("Device 5 com status: %d\n\r", com);
 
-  printf("\nSTATUS CHECK\n");
+  printf("\n\rSTATUS CHECK\n\r");
   err|=osp2_send_readtempstat(1, &temp, &stat);
-  if( stat & OSP2_SETUP_FLAGS_OSIRE_ERRORS ) { printf("ERROR status\n"); err|=OSP2_ERROR_STATUSFLAGS; }
+  if( stat & OSP2_SETUP_FLAGS_OSIRE_ERRORS ) { printf("ERROR status\n\r"); err|=OSP2_ERROR_STATUSFLAGS; }
   err|=osp2_send_readtempstat(2, &temp, &stat);
-  if( stat & OSP2_SETUP_FLAGS_SAID_ERRORS ) { printf("ERROR status\n"); err|=OSP2_ERROR_STATUSFLAGS; }
+  if( stat & OSP2_SETUP_FLAGS_OSIRE_ERRORS ) { printf("ERROR status\n\r"); err|=OSP2_ERROR_STATUSFLAGS; }
   err|=osp2_send_readtempstat(3, &temp, &stat);
-  if( stat & OSP2_SETUP_FLAGS_OSIRE_ERRORS ) { printf("ERROR status\n"); err|=OSP2_ERROR_STATUSFLAGS; }
+  if( stat & OSP2_SETUP_FLAGS_SAID_ERRORS ) { printf("ERROR status\n\r"); err|=OSP2_ERROR_STATUSFLAGS; }
+  err|=osp2_send_readtempstat(4, &temp, &stat);
+  if( stat & OSP2_SETUP_FLAGS_OSIRE_ERRORS ) { printf("ERROR status\n\r"); err|=OSP2_ERROR_STATUSFLAGS; }
+  err|=osp2_send_readtempstat(5, &temp, &stat);
+  if( stat & OSP2_SETUP_FLAGS_OSIRE_ERRORS ) { printf("ERROR status\n\r"); err|=OSP2_ERROR_STATUSFLAGS; }
 
-  printf("\nFORCE ARG ERROR\n");
-  err|=osp2_send_setsetup(2, OSP2_SETUP_FLAGS_SAID_DFLT | OSP2_SETUP_FLAGS_CRCEN | OSP2_SETUP_FLAGS_CE );
-  err|=osp2_send_readsetup(2,&flags );
-  printf("## setpwm to SAID is a comm error, that will switch to SLEEP and thus LEDs off\n");
-  err|=osp2_send_setpwm(2,0x3333,0x2222,0x1111,0b000);
-  err|=osp2_send_readstat(2, &stat);
-  err|=osp2_send_readstat(2, &stat);
-  printf("## error cleared, switch SAID to active\n");
-  err|=osp2_send_goactive(2);
+  printf("\n\rFORCE ARG ERROR\n\r");
+  err|=osp2_send_setsetup(3, OSP2_SETUP_FLAGS_SAID_DFLT | OSP2_SETUP_FLAGS_CRCEN | OSP2_SETUP_FLAGS_CE );
+  err|=osp2_send_readsetup(3,&flags );
+  printf("## setpwm to SAID is a comm error, that will switch to SLEEP and thus LEDs off\n\r");
+  err|=osp2_send_setpwm(3,0x3333,0x2222,0x1111,0b000);
+  err|=osp2_send_readstat(3, &stat);
+  err|=osp2_send_readstat(3, &stat);
+  printf("## error cleared, switch SAID to active\n\r");
+  err|=osp2_send_goactive(3);
 
-  printf("\nOTP TEST\n");
-  osp2_exec_i2cenable_set(2,1);
-  osp2_exec_otpdump(2, OSP2_OTPDUMP_CUSTOMER_HEX);
+  printf("\n\rOTP TEST\n\r");
+  osp2_exec_i2cenable_set(3,1);
+  osp2_exec_otpdump(3, OSP2_OTPDUMP_CUSTOMER_HEX);
 
-  if( err==OSP2_ERROR_NONE ) {
-    printf("\ndone-with-success\n");
+  if( err==OSP2_ERROR_NONE )
+  {
+    printf("\n\rdone-with-success\n\r");
     set_led_green(1);
-  } else {
-    printf("\nDONE-WITH-ERROR\n");
+  }
+  else
+  {
+	exit_with_error:
+    printf("\n\rDONE-WITH-ERROR\n\r");
     set_led_red(1);
   }
 }
 
-
 // Tests several SAID I2C features
-void i2c()
+void i2c(void)
 {
   osp2_error_t      err;
   uint16_t          last;
@@ -257,33 +316,51 @@ void i2c()
 }
 
 
-// A simple animation on SAID at addr 2
-void anim()
+// A simple animation on SAID at addr 3
+void anim(void)
 {
-  uint16_t last;
-  uint8_t stat,temp;
-  osp2_exec_reset();
-  osp2_send_initloop(1,&last,&temp,&stat);
-  osp2_send_readstat(2, &stat); // Every SAID boots with over voltage, clear that flag
-  osp2_send_goactive(0);
-  while( 1 ) {
-    for(int chn=0; chn<3; chn++) {
-      for( int col=0; col<3; col++ ) {
-        uint16_t red   = col==0 ? 0x3333 : 0;
-        uint16_t green = col==1 ? 0x3333 : 0;
-        uint16_t blue  = col==2 ? 0x3333 : 0;
-        osp2_send_setpwmchn(2,chn,red,green,blue);
-        Cy_SysLib_Delay(100);
-        osp2_send_setpwmchn(2,chn,0,0,0);
-      }
-    }
+	static _Bool init = false;
+	static int chn=0;
+	static int col=0;
+	uint16_t last;
+	uint8_t stat,temp;
+
+  if(!init)
+  {
+	  osp2_exec_reset();
+	  osp2_send_initbidir(1,&last,&temp,&stat);
+	  osp2_send_clrerror(0);
+	  osp2_send_readstat(3, &stat); // Every SAID boots with over voltage, clear that flag
+	  osp2_send_goactive(0);
+	  init = true;
   }
 
+  if(chn<2)
+  {
+	  if(col<3)
+	  {
+	        uint16_t red   = col==0 ? 0x3FFF : 0;
+	        uint16_t green = col==1 ? 0x3FFF : 0;
+	        uint16_t blue  = col==2 ? 0x3FFF : 0;
+	        osp2_send_setpwmchn(3,chn,red,green,blue);
+	        col++;
+	  }
+	  else
+	  {
+		  col=0;
+		  osp2_send_setpwmchn(3,chn,0,0,0);
+		  chn++;
+	  }
+  }
+  else
+  {
+	  chn=0;
+  }
 }
 
 
 // This tests the difference between authenticated and test mode
-void testmode()
+void testmode(void)
 {
   osp2_error_t err = OSP2_ERROR_NONE;
   uint16_t last;
@@ -335,12 +412,15 @@ void i2cscan( uint8_t addr)
   //uint8_t      daddr7 = 0x40; // I2C address of IO expander on that SIAD
   osp2_error_t err = OSP2_ERROR_NONE;
   uint16_t     last;
-  int          loop;
+  uint8_t      temp;
+  uint8_t      stat;
   int          enable;
   uint32_t     id;
 
   // Configure chain and SAID for I2C (with several checks)
-  err= osp2_exec_resetinit(&last,&loop); on_error_gotoexit();
+  osp2_exec_reset();
+  err= osp2_send_initbidir(1,&last,&temp,&stat);
+  on_error_gotoexit();
   if( addr>last ) { err=OSP2_ERROR_ADDR; goto exit; }
   err= osp2_send_clrerror(0); on_error_gotoexit();
   err= osp2_send_setsetup(addr, OSP2_SETUP_FLAGS_SAID_DFLT  | OSP2_SETUP_FLAGS_CRCEN ); on_error_gotoexit();
@@ -384,12 +464,13 @@ void iox( uint8_t addr)
   uint8_t      daddr7 = 0x20; // I2C address of IO expander on that SIAD
   osp2_error_t err = OSP2_ERROR_NONE;
   uint16_t     last;
-  int          loop;
   int          enable;
   uint32_t     id;
+  uint8_t      temp;
+  uint8_t      stat;
 
   // Configure chain and SAID for I2C (with several checks)
-  err= osp2_exec_resetinit(&last,&loop); on_error_gotoexit();
+  err= osp2_send_initbidir(1,&last,&temp,&stat); on_error_gotoexit();
   if( addr>last ) { err=OSP2_ERROR_ADDR; goto exit; }
   err= osp2_send_clrerror(0); on_error_gotoexit();
   err= osp2_send_setsetup(addr, OSP2_SETUP_FLAGS_SAID_DFLT  | OSP2_SETUP_FLAGS_CRCEN ); on_error_gotoexit();

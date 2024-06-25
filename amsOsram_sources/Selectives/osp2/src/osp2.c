@@ -282,30 +282,30 @@ osp2_error_t osp2_exec_otpdump(uint16_t addr, int flags)
 
   if( flags && OSP2_OTPDUMP_RESERVED_FIELDS ) {
     flags |= OSP2_OTPDUMP_RESERVED_HEX;
-    printf("Not yet implemented RESERVED_FIELDS, using RESERVED_HEX\n");
+    printf("Not yet implemented RESERVED_FIELDS, using RESERVED_HEX\n\r\r");
   }
 
   if( flags && OSP2_OTPDUMP_RESERVED_HEX ) {
     printf("OTP 0x%02X:",0x00);
     for( int otpaddr=0x00; otpaddr<0x0D; otpaddr+=1 ) printf(" %02X",otp[otpaddr]);
-    printf("\n");
+    printf("\n\r");
   }
 
   if( flags && OSP2_OTPDUMP_CUSTOMER_HEX ) {
     printf("OTP 0x%02X:",0x0D);
     for( int otpaddr=0x0D; otpaddr<0x20; otpaddr+=1 ) printf(" %02X",otp[otpaddr]);
-    printf("\n");
+    printf("\n\r");
   }
 
   if( flags && OSP2_OTPDUMP_CUSTOMER_FIELDS ) {
-    printf("CH_CLUSTERING     0D.7:5 %d\n", BITS_SLICE(otp[0x0D],5,8) );
-    printf("HAPTIC_DRIVER     0D.4   %d\n", BITS_SLICE(otp[0x0D],4,5) );
-    printf("SPI_MODE          0D.3   %d\n", BITS_SLICE(otp[0x0D],3,4) );
-    printf("SYNC_PIN_EN       0D.2   %d\n", BITS_SLICE(otp[0x0D],2,3) );
-    printf("STAR_NET_EN       0D.1   %d\n", BITS_SLICE(otp[0x0D],1,2) );
-    printf("I2C_BRIDGE_EN     0D.0   %d\n", BITS_SLICE(otp[0x0D],0,1) );
-    printf("OTP_ADDR_EN       0E.3   %d\n", BITS_SLICE(otp[0x0E],3,4) );
-    printf("STAR_NET_OTP_ADDR 0E.2:0 %d (0x%03X)\n", BITS_SLICE(otp[0x0E],0,3), BITS_SLICE(otp[0x0E],0,3)<<7 );
+    printf("CH_CLUSTERING     0D.7:5 %d\n\r", BITS_SLICE(otp[0x0D],5,8) );
+    printf("HAPTIC_DRIVER     0D.4   %d\n\r", BITS_SLICE(otp[0x0D],4,5) );
+    printf("SPI_MODE          0D.3   %d\n\r", BITS_SLICE(otp[0x0D],3,4) );
+    printf("SYNC_PIN_EN       0D.2   %d\n\r", BITS_SLICE(otp[0x0D],2,3) );
+    printf("STAR_NET_EN       0D.1   %d\n\r", BITS_SLICE(otp[0x0D],1,2) );
+    printf("I2C_BRIDGE_EN     0D.0   %d\n\r", BITS_SLICE(otp[0x0D],0,1) );
+    printf("OTP_ADDR_EN       0E.3   %d\n\r", BITS_SLICE(otp[0x0E],3,4) );
+    printf("STAR_NET_OTP_ADDR 0E.2:0 %d (0x%03X)\n\r", BITS_SLICE(otp[0x0E],0,3), BITS_SLICE(otp[0x0E],0,3)<<7 );
   }
 
   return err;
@@ -466,7 +466,7 @@ osp2_error_t osp2_send_reset(uint16_t addr) {
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n");
+    printf("\n\r");
   };
 
   return error;
@@ -517,7 +517,7 @@ osp2_error_t osp2_send_clrerror(uint16_t addr) {
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n");
+    printf("\n\r");
   };
 
   return error;
@@ -594,7 +594,7 @@ osp2_error_t osp2_send_initbidir(uint16_t addr, uint16_t * last, uint8_t * temp,
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
     printf(" last=0x%02X=%d temp=0x%02X=%d stat=0x%02X=%s",  *last, *last,
       *temp, osp2_temp_said(*temp), *stat, osp2_stat_said_str(*stat) );
-    printf(" (%d, %s)\n",  osp2_temp_osire(*temp), osp2_stat_osire_str(*stat) );
+    printf(" (%d, %s)\n\r",  osp2_temp_osire(*temp), osp2_stat_osire_str(*stat) );
   }
 
   return error;
@@ -671,7 +671,7 @@ osp2_error_t osp2_send_initloop(uint16_t addr, uint16_t * last, uint8_t * temp, 
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
     printf(" last=0x%02X=%d temp=0x%02X=%d stat=0x%02X=%s",  *last, *last,
       *temp, osp2_temp_said(*temp), *stat, osp2_stat_said_str(*stat) );
-    printf(" (%d, %s)\n",  osp2_temp_osire(*temp), osp2_stat_osire_str(*stat) );
+    printf(" (%d, %s)\n\r",  osp2_temp_osire(*temp), osp2_stat_osire_str(*stat) );
   }
 
   return error;
@@ -727,7 +727,7 @@ osp2_error_t osp2_send_goactive(uint16_t addr) {
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n");
+    printf("\n\r");
   }
 
   return error;
@@ -805,7 +805,7 @@ osp2_error_t osp2_send_identify(uint16_t addr, uint32_t * id) {
       else if( des_error!=OSP2_ERROR_NONE ) printf(" [destructor ERROR %s]", osp2_error_str(des_error) );
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
-    printf(" id=0x%08lX\n",*id);
+    printf(" id=0x%08lX\n\r",*id);
   }
 
   return error;
@@ -865,7 +865,7 @@ osp2_error_t osp2_send_sync(uint16_t addr) {
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n");
+    printf("\n\r");
   };
 
   return error;
@@ -933,7 +933,7 @@ osp2_error_t osp2_send_i2cread8(uint16_t addr, uint8_t daddr7, uint8_t raddr, ui
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n" );
+    printf("\n\r" );
   }
 
   return error;
@@ -994,7 +994,7 @@ osp2_error_t osp2_send_i2cwrite8(uint16_t addr, uint8_t daddr7, uint8_t raddr, u
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n" );
+    printf("\n\r" );
   }
 
   return error;
@@ -1068,7 +1068,7 @@ osp2_error_t osp2_send_readlast(uint16_t addr, uint8_t * buf, int size) {
       else if( des_error!=OSP2_ERROR_NONE ) printf(" [destructor ERROR %s]", osp2_error_str(des_error) );
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
-    printf(" i2c %s\n", osp2_buf_str(buf,size) );
+    printf(" i2c %s\n\r", osp2_buf_str(buf,size) );
   }
 
   return error;
@@ -1159,7 +1159,7 @@ osp2_error_t osp2_send_readstat(uint16_t addr, uint8_t * stat) {
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
     printf(" stat=0x%02X=%s", *stat, osp2_stat_said_str(*stat) );
-    printf(" (%s)\n", osp2_stat_osire_str(*stat) );
+    printf(" (%s)\n\r", osp2_stat_osire_str(*stat) );
   }
 
   return error;
@@ -1234,7 +1234,7 @@ osp2_error_t osp2_send_readtempstat(uint16_t addr, uint8_t * temp, uint8_t * sta
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
     printf(" temp=0x%02X=%d stat=0x%02X=%s", *temp, osp2_temp_said(*temp), *stat, osp2_stat_said_str(*stat) );
-    printf(" (%d, %s)\n",  osp2_temp_osire(*temp), osp2_stat_osire_str(*stat) );
+    printf(" (%d, %s)\n\r",  osp2_temp_osire(*temp), osp2_stat_osire_str(*stat) );
   }
 
   return error;
@@ -1309,7 +1309,7 @@ osp2_error_t osp2_send_readcomst(uint16_t addr, uint8_t * com) {
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
     printf(" com=0x%02X=%s", *com, osp2_com_said_str(*com) );
-    printf(" (%s)\n", osp2_com_osire_str(*com) );
+    printf(" (%s)\n\r", osp2_com_osire_str(*com) );
   }
 
   return error;
@@ -1389,7 +1389,7 @@ osp2_error_t osp2_send_readtemp(uint16_t addr, uint8_t * temp) {
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
     printf(" temp=0x%02X=%d", *temp, osp2_temp_said(*temp) );
-    printf(" (%d)\n", osp2_temp_osire(*temp) );
+    printf(" (%d)\n\r", osp2_temp_osire(*temp) );
   }
 
   return error;
@@ -1468,7 +1468,7 @@ osp2_error_t osp2_send_readsetup(uint16_t addr, uint8_t *flags ) {
       else if( des_error!=OSP2_ERROR_NONE ) printf(" [destructor ERROR %s]", osp2_error_str(des_error) );
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
-    printf(" flags=0x%02X=%s\n", *flags, osp2_setup_str(*flags) );
+    printf(" flags=0x%02X=%s\n\r", *flags, osp2_setup_str(*flags) );
   }
 
   return error;
@@ -1521,7 +1521,7 @@ osp2_error_t osp2_send_setsetup(uint16_t addr, uint8_t flags) {
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n" );
+    printf("\n\r" );
   }
 
   return error;
@@ -1599,7 +1599,7 @@ osp2_error_t osp2_send_readpwm(uint16_t addr, uint16_t *red, uint16_t *green, ui
       else if( des_error!=OSP2_ERROR_NONE ) printf(" [destructor ERROR %s]", osp2_error_str(des_error) );
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
-    printf(" rgb=%s\n", osp2_pwm_osire_str(*red,*green,*blue,*daytimes) );
+    printf(" rgb=%s\n\r", osp2_pwm_osire_str(*red,*green,*blue,*daytimes) );
   }
 
   return error;
@@ -1677,7 +1677,7 @@ osp2_error_t osp2_send_readpwmchn(uint16_t addr, uint8_t chn, uint16_t *red, uin
       else if( des_error!=OSP2_ERROR_NONE ) printf(" [destructor ERROR %s]", osp2_error_str(des_error) );
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
-    printf(" rgb=%s\n", osp2_pwm_said_str(*red,*green,*blue) );
+    printf(" rgb=%s\n\r", osp2_pwm_said_str(*red,*green,*blue) );
   }
 
   return error;
@@ -1739,7 +1739,7 @@ osp2_error_t osp2_send_setpwm(uint16_t addr, uint16_t red, uint16_t green, uint1
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n" );
+    printf("\n\r" );
   }
 
   return error;
@@ -1801,7 +1801,7 @@ osp2_error_t osp2_send_setpwmchn(uint16_t addr, uint8_t chn, uint16_t red, uint1
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n" );
+    printf("\n\r" );
   }
 
   return error;
@@ -1880,7 +1880,7 @@ osp2_error_t osp2_send_readcurchn(uint16_t addr, uint8_t chn, uint8_t *flags, ui
       else if( des_error!=OSP2_ERROR_NONE ) printf(" [destructor ERROR %s]", osp2_error_str(des_error) );
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
-    printf(" flags=%s rcur=%X gcur=%X bcur=%X\n", osp2_curchn_str(*flags), *rcur,*gcur,*bcur );
+    printf(" flags=%s rcur=%X gcur=%X bcur=%X\n\r", osp2_curchn_str(*flags), *rcur,*gcur,*bcur );
   }
 
   return error;
@@ -1941,7 +1941,7 @@ osp2_error_t osp2_send_setcurchn(uint16_t addr, uint8_t chn, uint8_t flags, uint
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n" );
+    printf("\n\r" );
   }
 
   return error;
@@ -2022,7 +2022,7 @@ osp2_error_t osp2_send_readi2ccfg(uint16_t addr, uint8_t *flags, uint8_t *speed 
       else if( des_error!=OSP2_ERROR_NONE ) printf(" [destructor ERROR %s]", osp2_error_str(des_error) );
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
-    printf(" flags=0x%02X=%s speed=0x%02X=%d\n", *flags, osp2_i2ccfg_str(*flags), *speed, osp2_i2ccfg_speed(*speed) );
+    printf(" flags=0x%02X=%s speed=0x%02X=%d\n\r", *flags, osp2_i2ccfg_str(*flags), *speed, osp2_i2ccfg_speed(*speed) );
   }
 
   return error;
@@ -2078,7 +2078,7 @@ osp2_error_t osp2_send_seti2ccfg(uint16_t addr, uint8_t flags, uint8_t speed ) {
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n" );
+    printf("\n\r" );
   }
 
   return error;
@@ -2156,7 +2156,7 @@ osp2_error_t osp2_send_readotp(uint16_t addr, uint8_t otpaddr, uint8_t * buf, in
       else if( des_error!=OSP2_ERROR_NONE ) printf(" [destructor ERROR %s]", osp2_error_str(des_error) );
     printf(" ->" );
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [resp %s]",osp2_buf_str(resp.data,resp.size));
-    printf(" otp 0x%02X: %s\n", otpaddr, osp2_buf_str(buf,size) );
+    printf(" otp 0x%02X: %s\n\r", otpaddr, osp2_buf_str(buf,size) );
   }
 
   return error;
@@ -2222,7 +2222,7 @@ osp2_error_t osp2_send_setotp(uint16_t addr, uint8_t otpaddr, uint8_t * buf, int
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n" );
+    printf("\n\r" );
   }
 
   return error;
@@ -2282,7 +2282,7 @@ osp2_error_t osp2_send_settestdata(uint16_t addr, uint16_t data ) {
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n" );
+    printf("\n\r" );
   }
 
   return error;
@@ -2341,7 +2341,7 @@ osp2_error_t osp2_send_testpw(uint16_t addr, uint64_t pw) {
     if( osp2_log_level >= OSP2_LOG_LEVEL_TELE ) printf(" [tele %s]",osp2_buf_str(tele.data,tele.size));
     if( con_error!=OSP2_ERROR_NONE ) printf(" [constructor ERROR %s]", osp2_error_str(con_error) );
       else if( spi_error!=NO_ERROR_SPI ) printf(" [SPI ERROR %s]", osp2_error_str((osp2_error_t)spi_error) );
-    printf("\n" );
+    printf("\n\r" );
   }
 
   return error;
