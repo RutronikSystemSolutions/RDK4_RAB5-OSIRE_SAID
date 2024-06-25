@@ -69,16 +69,21 @@ int main(void)
 	/*Hardware initialisation*/
 	init_sys();
 
-	/* Initial demo*/
+	/* Initial SAID tests*/
 	said();
 
-	i2cscan( 0x03);
+	/*SAID I2C test*/
+	said_i2c_test(RAB5_SAID_ADDR);
 
 	/*Main loop*/
 	for (;;)
 	{
-		anim();
+		/*Indicates on the E5515 side-lookers*/
+		sidelookers_animate();
+
+		/*System Basis Chip Watchdog feeding*/
 		sbc_rab5_osire_check_wdt();
+
 		Cy_SysLib_Delay(100);
 	}
 }

@@ -30,6 +30,7 @@
 #include <amsOsram_sources/SwTimer/inc/swTimer.h>
 #include "sys_timer.h"
 #include "nonBlock_spi_timer.h"
+#include "i2c_slave.h"
 #include "sbc_rab5_osire.h"
 #include "cy_retarget_io.h"
 
@@ -103,6 +104,13 @@ void init_sys(void)
 	hal_init_flash();
 
 	__enable_irq();
+
+	/*Initialise the RDK4 I2C Slave for SAID I2C test*/
+	result = rdk4_i2c_slave_init();
+    if (result != CY_RSLT_SUCCESS)
+    {
+    	CY_ASSERT(0);
+    }
 
 	/*RESET*/
 	Cy_SysLib_Delay(10);

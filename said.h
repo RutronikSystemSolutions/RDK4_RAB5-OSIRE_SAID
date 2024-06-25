@@ -10,20 +10,17 @@
 
 #define RAB5_SAID_ADDR		(3U)
 
-// Tests several of the basic SAID features
+/* Tests several of the basic SAID features and initiates the I2C */
 void said(void);
 
-// Tests several SAID I2C features
-void i2c(void);
-
 // A simple animation on SAID at addr 2
-void anim(void);
+void sidelookers_animate(void);
 
 // This tests the difference between authenticated and test mode
 void testmode(void);
 
-// This scans the I2C bus (on SAID `addr`) for devices
-void i2cscan( uint8_t addr);
+/*Tests the SAID I2C by reading the data from the RDK4 I2C Slave */
+void said_i2c_test( uint8_t addr);
 
 void parallel (void);
 

@@ -176,148 +176,17 @@ void said(void)
 
   if( err==OSP2_ERROR_NONE )
   {
-    printf("\n\rdone-with-success\n\r");
-    set_led_green(1);
+    printf("\n\rSAID tests: PASS\n\r");
   }
   else
   {
 	exit_with_error:
-    printf("\n\rDONE-WITH-ERROR\n\r");
-    set_led_red(1);
+    printf("\n\rSAID tests: FAILED\n\r");
   }
 }
 
-// Tests several SAID I2C features
-void i2c(void)
-{
-  osp2_error_t      err;
-  uint16_t          last;
-  uint8_t           temp;
-  uint8_t           stat;
-  uint8_t           flags;
-  uint8_t           rcur;
-  uint8_t           gcur;
-  uint8_t           bcur;
-  uint8_t           buf[8];
-  int               i2cenable1;
-  int               i2cenable2;
-
-  err = 0;
-
-  printf("\nASSUMPTION: MCU-OSIRE-SAID(RGB,RGB,I2C-24LC04BEEPROM)-OSIRE-MCU\n");
-  printf("\nINIT\n");
-  err|=osp2_exec_reset();
-  err|=osp2_send_initloop(1,&last,&temp,&stat);
-  err|=osp2_send_readstat(2, &stat); // Every SAID boots with over voltage, clear that flag
-  err|=osp2_send_setsetup(2, OSP2_SETUP_FLAGS_SAID_DFLT  | OSP2_SETUP_FLAGS_CRCEN ); // Enable CRC checking by SAID
-
-#if 0
-  printf("\nSTATUS CHECK (to clear over voltage error)\n");
-  err|=osp2_send_readtempstat(2, &temp, &stat);
-  if( stat & OSP2_SETUP_FLAGS_SAID_ERRORS ) { printf("ERROR status\n"); err|=OSP_ERROR_INITIALIZATION; }
-
-  printf("\nPWM OFF (ensure not influence I2C on same channel\n");
-  err|=osp2_send_setpwmchn(2,2,0x0000,0x0000,0x0000);
-
-  printf("\nI2C CFG\n");
-  err|=osp2_send_seti2ccfg(2, 0, 12);
-  err|=osp2_send_readi2ccfg(2, &flags, &speed);
-
-  printf("\nSAID ACTIVE\n");
-  err|=osp2_send_goactive(2);
-#endif
-
-  printf("\nI2C & CURRENT ON\n");
-  err|=osp2_exec_i2cenable_get(2,&i2cenable1);
-  err|=osp2_exec_i2cenable_set(2,1);
-  err|=osp2_exec_i2cenable_get(2,&i2cenable2);
-  err|=osp2_send_setcurchn(2, 2, 0, 4, 4, 4);
-  err|=osp2_send_readcurchn(2, 2, &flags, &rcur, &gcur, &bcur);
-  printf("i2cenable %d -> %d\n",i2cenable1,i2cenable2);
-
-#if 0
-  printf("\nI2C WRITE (NACK)\n");
-  buf[0]='X';
-  err|=osp2_send_i2cwrite8(2, 0x40, 0x10, buf, 1);
-  err|=osp2_send_readi2ccfg(2, &flags, &speed);
-#endif
-
-#if 0
-  printf("\nI2C READ (NACK)\n");
-  err|=osp2_send_i2cread8(2, 0x40, 0x00, 4);
-  err|=osp2_send_readi2ccfg(2, &flags, &speed);
-  err|=osp2_send_readlast(2, buf, 4);
-#endif
-
-#if 0
-  printf("\nI2C WRITE (11 22 to 10)\n");
-  buf[0]= 0x11;
-  buf[1]= 0x22;
-  err|=osp2_send_i2cwrite8(2, 0x50, 0x10, buf, 2);
-  err|=osp2_send_readi2ccfg(2, &flags, &speed);
-#endif
-
-#if 0
-  printf("\nI2C WRITE ('SAID' to 0x00)\n");
-  buf[0]='S';
-  buf[1]='A';
-  buf[2]='I';
-  buf[3]='D';
-  err|=osp2_send_i2cwrite8(2, 0x50, 0x00, buf, 4);
-  err|=osp2_send_readi2ccfg(2, &flags, &speed);
-#endif
-
-#if 0
-  printf("\nI2C READ (4 from 0x00)\n");
-  err|=osp2_send_i2cread8(2, 0x50, 0x00, 4);
-  err|=osp2_send_readi2ccfg(2, &flags, &speed);
-  err|=osp2_send_readlast(2, buf, 4);
-  buf[4]='\0';
-  printf("EEPROM '%s'\n",buf);
-#endif
-
-#if 1
-  printf("\nI2C HIGH LEVEL\n");
-  buf[0]=0x33; buf[1]=0x44; buf[2]=0x55; buf[3]=0x66;
-  err|=osp2_exec_i2cwrite8(2, 0x50, 0x20, buf, 4);
-  err|=osp2_exec_i2cread8(2, 0x50, 0x21, buf, 3);
-  printf("EEPROM '%s' (%d)\n",osp2_buf_str(buf,3),err);
-#endif
-
-#if 0
-  printf("\nINT POLL (switch off log for speed)\n");
-  // A button is connected to INT, this poll loop will map button state to green0
-  osp2_log_set_enable(false); // No log to increase polling speed
-  err|=osp2_send_goactive(2); // Feedback via LED, so SAID must be active
-  uint8_t prev= 0; // "Previous" state of button (not pressed)
-  uint32_t start = get_sysTick_int();
-  while( get_sysTick_int()-start < 15000 ) {
-    uint8_t speed;
-    err|=osp2_send_readi2ccfg(2, &flags, &speed);
-    uint8_t curr= flags & OSP2_I2CCFG_FLAGS_INT; // "Current" state of button
-    if( prev!=curr ) { // Button state has changed, update green.0
-      uint16_t green = curr ? 0x6666: 0x0000;
-      err|=osp2_send_setpwmchn(2,0,0x0000,green,0x0000);
-    }
-    prev= curr;
-  }
-#endif
-
-  printf("\nSTATUS CHECK\n");
-  err|=osp2_send_readtempstat(2, &temp, &stat);
-  if( stat & OSP2_SETUP_FLAGS_SAID_ERRORS ) { printf("ERROR status\n"); err|=OSP_ERROR_INITIALIZATION; }
-  if( err==OSP2_ERROR_NONE ) {
-    printf("done-with-success\n");
-    set_led_green(1);
-  } else {
-    printf("DONE-WITH-ERROR\n");
-    set_led_red(1);
-  }
-}
-
-
-// A simple animation on SAID at addr 3
-void anim(void)
+/* A simple animation on RAB5-OSIRE SAID */
+void sidelookers_animate(void)
 {
 	static _Bool init = false;
 	static int chn=0;
@@ -404,56 +273,74 @@ void testmode(void)
 }
 
 
-// This scans the I2C bus (on SAID `addr`) for devices
-void i2cscan( uint8_t addr)
+/* Reads the data from RDK4 I2C slave */
+void said_i2c_test(uint8_t addr)
 {
-  #define on_error_gotoexit()   do { if( err!=OSP2_ERROR_NONE ) goto exit; } while(0)
+#define on_error_gotoexit()   do { if( err!=OSP2_ERROR_NONE ) goto exit; } while(0)
 
-  //uint8_t      daddr7 = 0x40; // I2C address of IO expander on that SIAD
-  osp2_error_t err = OSP2_ERROR_NONE;
-  uint16_t     last;
-  uint8_t      temp;
-  uint8_t      stat;
-  int          enable;
-  uint32_t     id;
+	uint8_t rdk4_addr = 0x08; // I2C address of RDK4 Slave I2C Device
+	osp2_error_t err = OSP2_ERROR_NONE;
+	uint16_t last;
+	uint8_t temp;
+	uint8_t stat;
+	int enable;
+	uint32_t id;
+	uint8_t buf[4];
 
-  printf("\n\rI2C scan in progress...\n\r");
+	printf("\n\rI2C test in progress...\n\r");
 
-  // Configure chain and SAID for I2C (with several checks)
-  osp2_exec_reset();
-  err= osp2_send_initbidir(1,&last,&temp,&stat);
-  on_error_gotoexit();
-  if( addr>last ) { err=OSP2_ERROR_ADDR; goto exit; }
-  err= osp2_send_clrerror(0); on_error_gotoexit();
-  err= osp2_send_setsetup(addr, OSP2_SETUP_FLAGS_SAID_DFLT  | OSP2_SETUP_FLAGS_CRCEN ); on_error_gotoexit();
-  err = osp2_send_identify( addr, &id ); on_error_gotoexit();
-  if( id!=0x00000040 ) { err=OSP2_ERROR_ID; goto exit; }
-  osp2_exec_i2cenable_get(addr,&enable); on_error_gotoexit();
-  if( !enable ) { err=OSP2_ERROR_MISSI2CBRIDGE; goto exit; }
-  err= osp2_send_setcurchn(addr, /*chan*/2, /*flags*/0, 4, 4, 4); on_error_gotoexit();
-  err= osp2_send_seti2ccfg(addr, OSP2_I2CCFG_FLAGS_DEFAULT, OSP2_I2CCFG_SPEED_DEFAULT); on_error_gotoexit();
+	/* Configure  SAID for I2C (with several checks) */
+	osp2_exec_reset();
+	err = osp2_send_initbidir(1, &last, &temp, &stat);
+	on_error_gotoexit();
+	if (addr > last)
+	{
+		err = OSP2_ERROR_ADDR;
+		goto exit;
+	}
+	err = osp2_send_clrerror(0);
+	on_error_gotoexit();
+	err = osp2_send_setsetup(addr,OSP2_SETUP_FLAGS_SAID_DFLT | OSP2_SETUP_FLAGS_CRCEN);
+	on_error_gotoexit();
+	err = osp2_send_identify(addr, &id);
+	on_error_gotoexit();
+	if (id != 0x00000040)
+	{
+		err = OSP2_ERROR_ID;
+		goto exit;
+	}
+	osp2_exec_i2cenable_get(addr, &enable);
+	on_error_gotoexit();
+	if (!enable)
+	{
+		err = OSP2_ERROR_MISSI2CBRIDGE;
+		goto exit;
+	}
+	err = osp2_send_setcurchn(addr, /*chan*/2, /*flags*/0, 4, 4, 4);
+	on_error_gotoexit();
+	err = osp2_send_seti2ccfg(addr, OSP2_I2CCFG_FLAGS_DEFAULT,
+			OSP2_I2CCFG_SPEED_DEFAULT);
+	on_error_gotoexit();
+	err = osp2_exec_i2cread8(addr, rdk4_addr, 0x00, buf, 4);
+	if (err != OSP2_ERROR_I2CNACK && err != OSP2_ERROR_I2CTIMEOUT && err != OSP2_ERROR_NONE)
+	{
+		on_error_gotoexit();
+	}
 
-  for( uint8_t daddr7=0; daddr7<0x80; daddr7++ )
-  {
-    if( daddr7 % 8 == 0) printf("%02x: ",daddr7);
-    // Try to read all registers of ...
-    uint8_t buf[4];
-    err = osp2_exec_i2cread8(addr, daddr7, 0x00, buf, 1);
-    if( err!=OSP2_ERROR_I2CNACK && err!=OSP2_ERROR_I2CTIMEOUT && err!=OSP2_ERROR_NONE ) on_error_gotoexit();
-    int fail =  err==OSP2_ERROR_I2CNACK || err==OSP2_ERROR_I2CTIMEOUT;
-    if( fail ) printf(" %02x ",daddr7); else printf("[%02x]",daddr7);
-    if( daddr7 % 8 == 7) printf("\n\r");
-    err=OSP2_ERROR_NONE;
-  }
+	printf("The I2C data from RDK4 slave: 0x%2X%2X%2X%2X\n\r",
+			(unsigned int) buf[0], (unsigned int) buf[1],
+			(unsigned int) buf[2], (unsigned int) buf[3]);
 
-exit:
-  if( err==OSP2_ERROR_NONE ) {
-    printf("done-with-success\n");
-    set_led_green(1);
-  } else {
-    printf("DONE-WITH-ERROR\n");
-    set_led_red(1);
-  }
+	err = OSP2_ERROR_NONE;
+
+	exit: if (err == OSP2_ERROR_NONE)
+	{
+		printf("I2C test successful\n\r");
+	}
+	else
+	{
+		printf("I2C test failure\n\r");
+	}
 }
 
 void parallel (void)
