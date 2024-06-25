@@ -206,7 +206,6 @@ void sidelookers_animate(void)
 	  // cur   0    1    2    3    4
 	  // chn0  3mA  6mA 12mA 24mA 48mA
 	  // chn1 1.5mA 3mA  6mA 12mA 24mA
-	  // chn2 1.5mA 3mA  6mA 12mA 24mA
 
 	  /* Set LED4 current (channel 0) - 48mA (maximum)*/
 	  flags = 0;
