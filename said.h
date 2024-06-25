@@ -25,9 +25,6 @@ void testmode(void);
 // This scans the I2C bus (on SAID `addr`) for devices
 void i2cscan( uint8_t addr);
 
-// This tests the IO expander on SAID `addr`
-void iox( uint8_t addr);
-
 void parallel (void);
 
 void PWM(void);

@@ -367,20 +367,20 @@ void testmode(void)
   uint8_t stat,temp;
   uint8_t buf[8];
 
-  printf("\nRESET, INIT, STATUS\n");
+  printf("\n\rRESET, INIT, STATUS\n\r");
   err|=osp2_exec_reset();
   err|=osp2_send_initbidir(1,&last,&temp,&stat);
   //err|=osp2_send_initloop(1,&last,&temp,&stat);
-  err|= osp2_send_readstat(2, &stat); // Clear UV then check status (testmode bit)
-  err|= osp2_send_readstat(2, &stat);   printf("testmode %s\n",stat & OSP2_STATUS_FLAGS_TESTMODE ? "yes":"no");
+  err|= osp2_send_readstat(3, &stat); // Clear UV then check status (testmode bit)
+  err|= osp2_send_readstat(3, &stat);   printf("testmode %s\n",stat & OSP2_STATUS_FLAGS_TESTMODE ? "yes":"no");
 
 
-  printf("\nEnable TESTMODE, STATUS\n");
-  err|= osp2_send_testpw(2,0x4247525F4143ULL); // Enable authenticated mode
-  err|= osp2_send_readstat(2, &stat);   printf("testmode %s\n",stat & OSP2_STATUS_FLAGS_TESTMODE ? "yes":"no");
-  err|= osp2_send_settestdata(2,0b00001); // Enable test mode
-  err|= osp2_send_readstat(2, &stat);   printf("testmode %s\n",stat & OSP2_STATUS_FLAGS_TESTMODE ? "yes":"no");
-  err|= osp2_exec_otpdump(2, OSP2_OTPDUMP_CUSTOMER_HEX);
+  printf("\n\rEnable TESTMODE, STATUS\n\r");
+  err|= osp2_send_testpw(3,0x4247525F4143ULL); // Enable authenticated mode
+  err|= osp2_send_readstat(3, &stat);   printf("testmode %s\n",stat & OSP2_STATUS_FLAGS_TESTMODE ? "yes":"no");
+  err|= osp2_send_settestdata(3,0b00001); // Enable test mode
+  err|= osp2_send_readstat(3, &stat);   printf("testmode %s\n",stat & OSP2_STATUS_FLAGS_TESTMODE ? "yes":"no");
+  err|= osp2_exec_otpdump(3, OSP2_OTPDUMP_CUSTOMER_HEX);
 
 //  err|= osp2_send_setcurchn(2, 0, 0, 4, 4, 4);
 //  err|= osp2_send_setcurchn(2, 1, 0, 4, 4, 4);
@@ -388,17 +388,17 @@ void testmode(void)
   err|= osp2_exec_otpdump(2, OSP2_OTPDUMP_CUSTOMER_HEX);
   err|= osp2_send_readtempstat(2,&temp, &stat);
 
-  printf("\nDisable TESTMODE, STATUS\n");
-  err|= osp2_send_settestdata(2,0b11111); // Disable test mode
-  err|= osp2_send_readstat(2, &stat);   printf("testmode %s\n",stat & OSP2_STATUS_FLAGS_TESTMODE ? "yes":"no");
-  err|= osp2_send_testpw(2,0); // Disable authenticated mode
+  printf("\n\rDisable TESTMODE, STATUS\n\r");
+  err|= osp2_send_settestdata(3,0b11111); // Disable test mode
+  err|= osp2_send_readstat(3, &stat);   printf("testmode %s\n",stat & OSP2_STATUS_FLAGS_TESTMODE ? "yes":"no");
+  err|= osp2_send_testpw(3,0); // Disable authenticated mode
   err|= osp2_send_readstat(2, &stat);   printf("testmode %s\n",stat & OSP2_STATUS_FLAGS_TESTMODE ? "yes":"no");
 
   if( err==OSP2_ERROR_NONE ) {
-    printf("\ndone-with-success\n");
+    printf("\n\rdone-with-success\n\r");
     set_led_green(1);
   } else {
-    printf("\nDONE-WITH-ERROR\n");
+    printf("\n\rDONE-WITH-ERROR\n\r");
     set_led_red(1);
   }
 }
@@ -417,6 +417,8 @@ void i2cscan( uint8_t addr)
   int          enable;
   uint32_t     id;
 
+  printf("\n\rI2C scan in progress...\n\r");
+
   // Configure chain and SAID for I2C (with several checks)
   osp2_exec_reset();
   err= osp2_send_initbidir(1,&last,&temp,&stat);
@@ -431,67 +433,17 @@ void i2cscan( uint8_t addr)
   err= osp2_send_setcurchn(addr, /*chan*/2, /*flags*/0, 4, 4, 4); on_error_gotoexit();
   err= osp2_send_seti2ccfg(addr, OSP2_I2CCFG_FLAGS_DEFAULT, OSP2_I2CCFG_SPEED_DEFAULT); on_error_gotoexit();
 
-  for( uint8_t daddr7=0; daddr7<0x80; daddr7++ ) {
+  for( uint8_t daddr7=0; daddr7<0x80; daddr7++ )
+  {
     if( daddr7 % 8 == 0) printf("%02x: ",daddr7);
-    // Try to read all registers of the IO expander
+    // Try to read all registers of ...
     uint8_t buf[4];
     err = osp2_exec_i2cread8(addr, daddr7, 0x00, buf, 1);
     if( err!=OSP2_ERROR_I2CNACK && err!=OSP2_ERROR_I2CTIMEOUT && err!=OSP2_ERROR_NONE ) on_error_gotoexit();
     int fail =  err==OSP2_ERROR_I2CNACK || err==OSP2_ERROR_I2CTIMEOUT;
     if( fail ) printf(" %02x ",daddr7); else printf("[%02x]",daddr7);
-    if( daddr7 % 8 == 7) printf("\n");
+    if( daddr7 % 8 == 7) printf("\n\r");
     err=OSP2_ERROR_NONE;
-  }
-
-
-exit:
-  if( err==OSP2_ERROR_NONE ) {
-    printf("done-with-success\n");
-    set_led_green(1);
-  } else {
-    printf("DONE-WITH-ERROR\n");
-    set_led_red(1);
-  }
-}
-
-
-
-// This tests the IO expander on SAID `addr`
-void iox( uint8_t addr)
-{
-  #define on_error_gotoexit()   do { if( err!=OSP2_ERROR_NONE ) goto exit; } while(0)
-
-  uint8_t      daddr7 = 0x20; // I2C address of IO expander on that SIAD
-  osp2_error_t err = OSP2_ERROR_NONE;
-  uint16_t     last;
-  int          enable;
-  uint32_t     id;
-  uint8_t      temp;
-  uint8_t      stat;
-
-  // Configure chain and SAID for I2C (with several checks)
-  err= osp2_send_initbidir(1,&last,&temp,&stat); on_error_gotoexit();
-  if( addr>last ) { err=OSP2_ERROR_ADDR; goto exit; }
-  err= osp2_send_clrerror(0); on_error_gotoexit();
-  err= osp2_send_setsetup(addr, OSP2_SETUP_FLAGS_SAID_DFLT  | OSP2_SETUP_FLAGS_CRCEN ); on_error_gotoexit();
-  err = osp2_send_identify( addr, &id ); on_error_gotoexit();
-  if( id!=0x00000040 ) { err=OSP2_ERROR_ID; goto exit; }
-  osp2_exec_i2cenable_get(addr,&enable); on_error_gotoexit();
-  if( !enable ) { err=OSP2_ERROR_MISSI2CBRIDGE; goto exit; }
-  err= osp2_send_setcurchn(addr, /*chan*/2, /*flags*/0, 4, 4, 4); on_error_gotoexit();
-  err= osp2_send_seti2ccfg(addr, OSP2_I2CCFG_FLAGS_DEFAULT, OSP2_I2CCFG_SPEED_DEFAULT); on_error_gotoexit();
-
-  // COnfigure even pins as output
-  uint8_t cfg = 0x55;
-  err = osp2_exec_i2cwrite8(addr, daddr7, 0x03, &cfg, 1);  on_error_gotoexit();
-
-  uint8_t pinp = 0;
-  for(int i=0; i<100000; i++) {
-    uint8_t inp;
-    err = osp2_exec_i2cread8(addr, daddr7, 0x00, &inp, 1);  on_error_gotoexit();
-    if( inp!=pinp ) { printf("iox %d %d %d %d\n", !(inp&0x01), !(inp&0x04), !(inp&0x10), !(inp&0x40) ); pinp=inp; }
-    uint8_t out = ~(inp << 1);
-    err = osp2_exec_i2cwrite8(addr, daddr7, 0x01, &out, 1);  on_error_gotoexit();
   }
 
 exit:

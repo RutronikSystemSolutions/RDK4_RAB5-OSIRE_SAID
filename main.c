@@ -72,6 +72,8 @@ int main(void)
 	/* Initial demo*/
 	said();
 
+	i2cscan( 0x03);
+
 	/*Main loop*/
 	for (;;)
 	{
