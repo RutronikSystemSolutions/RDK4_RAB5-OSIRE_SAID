@@ -18,28 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      *
  *****************************************************************************/
 
-#ifndef HAL_UART_INC_UART_H_
-#define HAL_UART_INC_UART_H_
+#ifndef UARTPROTOCOL_INC_OSPFUNCTIONS_H_
+#define UARTPROTOCOL_INC_OSPFUNCTIONS_H_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#include <UartProtocol/inc/uartProtocolHandler.h>
 
-#include "../../../../amsOsram_sources/Hal/CY_Uart/inc/genericUart.h"
+#define MULTIPLEADCREAD 0x01
 
-// ---- VARIABLES: -----------------------------------
-#define UART_TX_TIMEOUT_MS  10   // 10ms timeout
-#define UART_RX_TIMEOUT_MS  100  // 100ms timeout
 
-// ---- METHODS: -----------------------------------
+void osp_functions (uint8_t *p_msg, uartHeader_t hdr);
 
-errorUart_t hal_uart_init (void);
-errorUart_t uart_send_data_blocking (uint8_t *p_bufferSend, uint8_t count);
-errorUart_t uart_receive_data (void);
 
-#ifdef __cplusplus
-}
-#endif
 
-#endif /* HAL_UART_INC_UART_H_ */
+
+
+
+#endif /* UARTPROTOCOL_INC_OSPFUNCTIONS_H_ */

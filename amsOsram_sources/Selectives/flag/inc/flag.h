@@ -1,3 +1,4 @@
+// flag.h - Uses topo to paint flags spread out over an entire OSP string
 /*****************************************************************************
  * Copyright 2022 by ams OSRAM AG                                            *
  * All rights are reserved.                                                  *
@@ -17,29 +18,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE     *
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      *
  *****************************************************************************/
-
-#ifndef HAL_UART_INC_UART_H_
-#define HAL_UART_INC_UART_H_
+#ifndef FLAG_H_
+#define FLAG_H_
 
 #ifdef __cplusplus
 extern "C"
-{
+  {
 #endif
 
-#include "../../../../amsOsram_sources/Hal/CY_Uart/inc/genericUart.h"
 
-// ---- VARIABLES: -----------------------------------
-#define UART_TX_TIMEOUT_MS  10   // 10ms timeout
-#define UART_RX_TIMEOUT_MS  100  // 100ms timeout
+#include <osp2/inc/osp2.h>
 
-// ---- METHODS: -----------------------------------
 
-errorUart_t hal_uart_init (void);
-errorUart_t uart_send_data_blocking (uint8_t *p_bufferSend, uint8_t count);
-errorUart_t uart_receive_data (void);
+osp2_error_t flag_dutch(); // ~France, Luxembourg
+osp2_error_t flag_columbia(); // ~ Ecuador, Venezuela
+osp2_error_t flag_japan();
+osp2_error_t flag_mali(); //  ~ Benin, Cameroon, Ghana, Senegal
+osp2_error_t flag_europe();
+osp2_error_t flag_usa();
+osp2_error_t flag_china();
+
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_UART_INC_UART_H_ */
+#endif  // FLAG_H_

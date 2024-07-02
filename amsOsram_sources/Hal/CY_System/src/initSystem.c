@@ -28,9 +28,9 @@
 #include <amsOsram_sources/Hal/CY_Uart/inc/uart.h>
 #include <amsOsram_sources/Osp/inc/genericDevice.h>
 #include <amsOsram_sources/SwTimer/inc/swTimer.h>
+#include "i2c_slave.h"
 #include "sys_timer.h"
 #include "nonBlock_spi_timer.h"
-#include "i2c_slave.h"
 #include "sbc_rab5_osire.h"
 #include "cy_retarget_io.h"
 
@@ -94,6 +94,15 @@ void init_sys(void)
 		CY_ASSERT(0);
 	}
 
+    /*Initialize RDK2 I2C Slave Device*/
+    result =  rdk4_i2c_slave_init();
+    if (result != CY_RSLT_SUCCESS)
+    {
+    	CY_ASSERT(0);
+    }
+
+
+	/*amsOsram stack initialisations*/
 	hal_init_pin();
 	set_led_blue(0); //set LED to OFF or else they will light up
 	set_led_red(0);
@@ -104,13 +113,6 @@ void init_sys(void)
 	hal_init_flash();
 
 	__enable_irq();
-
-	/*Initialise the RDK4 I2C Slave for SAID I2C test*/
-	result = rdk4_i2c_slave_init();
-    if (result != CY_RSLT_SUCCESS)
-    {
-    	CY_ASSERT(0);
-    }
 
 	/*RESET*/
 	Cy_SysLib_Delay(10);

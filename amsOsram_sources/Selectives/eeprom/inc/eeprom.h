@@ -1,3 +1,4 @@
+// eeprom.h - read and write from an I2C EEPROM connected to a SAID
 /*****************************************************************************
  * Copyright 2022 by ams OSRAM AG                                            *
  * All rights are reserved.                                                  *
@@ -17,29 +18,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE     *
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      *
  *****************************************************************************/
-
-#ifndef HAL_UART_INC_UART_H_
-#define HAL_UART_INC_UART_H_
+#ifndef EEPROM_H_
+#define EEPROM_H_
 
 #ifdef __cplusplus
 extern "C"
-{
+  {
 #endif
 
-#include "../../../../amsOsram_sources/Hal/CY_Uart/inc/genericUart.h"
 
-// ---- VARIABLES: -----------------------------------
-#define UART_TX_TIMEOUT_MS  10   // 10ms timeout
-#define UART_RX_TIMEOUT_MS  100  // 100ms timeout
+#include <stdint.h>
+#include <osp2/inc/osp2.h>
 
-// ---- METHODS: -----------------------------------
 
-errorUart_t hal_uart_init (void);
-errorUart_t uart_send_data_blocking (uint8_t *p_bufferSend, uint8_t count);
-errorUart_t uart_receive_data (void);
+#define EEPROM_INTERNAL  0x50 // I2C address EEPROM on SAID basic board
+#define EEPROM_EXTERNAL  0x51 // I2C address EEPROM on "of I2C EEPROM sticks"
+
+
+osp2_error_t eeprom_present(uint16_t addr, uint8_t daddr7 );
+osp2_error_t eeprom_read   (uint16_t addr, uint8_t daddr7, uint8_t raddr, uint8_t *buf, int count );
+osp2_error_t eeprom_write  (uint16_t addr, uint8_t daddr7, uint8_t raddr, uint8_t *buf, int count );
+osp2_error_t eeprom_compare(uint16_t addr, uint8_t daddr7, uint8_t raddr, uint8_t *buf, int count );
+
+
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_UART_INC_UART_H_ */
+#endif  // EEPROM_H_

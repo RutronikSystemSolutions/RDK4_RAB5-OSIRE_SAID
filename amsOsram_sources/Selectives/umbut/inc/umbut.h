@@ -1,3 +1,4 @@
+// umbut.h - User Mode controlling changing LEDs when pressing local buttons
 /*****************************************************************************
  * Copyright 2022 by ams OSRAM AG                                            *
  * All rights are reserved.                                                  *
@@ -17,29 +18,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE     *
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      *
  *****************************************************************************/
-
-#ifndef HAL_UART_INC_UART_H_
-#define HAL_UART_INC_UART_H_
+#ifndef UMBUT_H_
+#define UMBUT_H_
 
 #ifdef __cplusplus
 extern "C"
-{
+  {
 #endif
 
-#include "../../../../amsOsram_sources/Hal/CY_Uart/inc/genericUart.h"
 
-// ---- VARIABLES: -----------------------------------
-#define UART_TX_TIMEOUT_MS  10   // 10ms timeout
-#define UART_RX_TIMEOUT_MS  100  // 100ms timeout
 
-// ---- METHODS: -----------------------------------
+void umbut_start();
+int  umbut_step ();
+void umbut_stop ();
 
-errorUart_t hal_uart_init (void);
-errorUart_t uart_send_data_blocking (uint8_t *p_bufferSend, uint8_t count);
-errorUart_t uart_receive_data (void);
+
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_UART_INC_UART_H_ */
+#endif  // UMBUT_H_

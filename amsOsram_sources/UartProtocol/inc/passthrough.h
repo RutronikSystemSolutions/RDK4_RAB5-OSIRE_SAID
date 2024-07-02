@@ -28,7 +28,7 @@ extern "C"
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "../../../amsOsram_sources/UartProtocol/inc/uartProtocolHandler.h"
+#include <UartProtocol/inc/uartProtocolHandler.h>
 
 /**
  * @brief Passthrough UART Message to microcontroller

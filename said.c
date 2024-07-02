@@ -172,7 +172,7 @@ void said(void)
 
   printf("\n\rOTP TEST\n\r");
   osp2_exec_i2cenable_set(3,1);
-  osp2_exec_otpdump(3, OSP2_OTPDUMP_CUSTOMER_HEX);
+  osp2_exec_otpdump(3);
 
   if( err==OSP2_ERROR_NONE )
   {
@@ -207,18 +207,18 @@ void sidelookers_animate(void)
 	  // chn0  3mA  6mA 12mA 24mA 48mA
 	  // chn1 1.5mA 3mA  6mA 12mA 24mA
 
-	  /* Set LED4 current (channel 0) - 48mA (maximum)*/
+	  /* Set LED4 current (channel 0) */
 	  flags = 0;
-	  rcur = 4;
-	  gcur = 4;
-	  bcur = 4;
+	  rcur = 2;
+	  gcur = 2;
+	  bcur = 2;
 	  osp2_send_setcurchn(3, 0, flags, rcur, gcur, bcur);
 
-	  /*Set LED3 current (channel 1) - 24mA (maximum)*/
+	  /*Set LED3 current (channel 1)*/
 	  flags = 0;
-	  rcur = 4;
-	  gcur = 4;
-	  bcur = 4;
+	  rcur = 3;
+	  gcur = 3;
+	  bcur = 3;
 	  osp2_send_setcurchn(3, 1, flags, rcur, gcur, bcur);
 
 	  /* Every SAID boots with over voltage, clear that flag */
@@ -276,12 +276,12 @@ void testmode(void)
   err|= osp2_send_readstat(3, &stat);   printf("testmode %s\n",stat & OSP2_STATUS_FLAGS_TESTMODE ? "yes":"no");
   err|= osp2_send_settestdata(3,0b00001); // Enable test mode
   err|= osp2_send_readstat(3, &stat);   printf("testmode %s\n",stat & OSP2_STATUS_FLAGS_TESTMODE ? "yes":"no");
-  err|= osp2_exec_otpdump(3, OSP2_OTPDUMP_CUSTOMER_HEX);
+  err|= osp2_exec_otpdump(3);
 
 //  err|= osp2_send_setcurchn(2, 0, 0, 4, 4, 4);
 //  err|= osp2_send_setcurchn(2, 1, 0, 4, 4, 4);
   err|= osp2_send_setotp(2,0x0D,buf,7);
-  err|= osp2_exec_otpdump(2, OSP2_OTPDUMP_CUSTOMER_HEX);
+  err|= osp2_exec_otpdump(2);
   err|= osp2_send_readtempstat(2,&temp, &stat);
 
   printf("\n\rDisable TESTMODE, STATUS\n\r");
