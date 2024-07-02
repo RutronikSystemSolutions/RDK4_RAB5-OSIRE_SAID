@@ -53,14 +53,7 @@
 #include "cy_pdl.h"
 #include "cyhal.h"
 #include "cybsp.h"
-
-#include <amsOsram_sources/Demos/DemoControl/inc/demoControl.h>
-#include <amsOsram_sources/Hal/Button/inc/button.h>
 #include <amsOsram_sources/Hal/CY_System/inc/initSystem.h>
-#include <amsOsram_sources/UartProtocol/inc/uartProtocolHandler.h>
-#include <amsOsram_sources/Selectives/osp2/inc/osp2.h>
-#include <amsOsram_sources/Hal/Osire/inc/osire.h>
-
 #include "sbc_rab5_osire.h"
 #include "said.h"
 
@@ -80,11 +73,10 @@ int main(void)
 	{
 		/*Indicates on the E5515 side-lookers*/
 		sidelookers_animate();
+		Cy_SysLib_Delay(100);
 
 		/*System Basis Chip Watchdog feeding*/
 		sbc_rab5_osire_check_wdt();
-
-		Cy_SysLib_Delay(100);
 	}
 }
 
