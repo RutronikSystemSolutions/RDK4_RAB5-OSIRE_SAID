@@ -22,7 +22,6 @@
 #include <amsOsram_sources/Demos/RunningLight/inc/runningLight.h>
 #include <amsOsram_sources/Driver/BufferControl/inc/bufferControl.h>
 #include <amsOsram_sources/Feature/ColorCorrection/inc/colorCorrection.h>
-#include <amsOsram_sources/Feature/ColorCorrection/inc/colorCorrectionTest.h>
 #include <amsOsram_sources/Feature/Init/inc/initFeature.h>
 #include <amsOsram_sources/Hal/CY_Gpios/inc/pin.h>
 #include <amsOsram_sources/Hal/CY_SPI/inc/spiGeneral.h>
@@ -94,7 +93,7 @@ void set_color(uint8_t color)
 	else
 	{
 		cxyY2XYZ(cx, cy, brightness, &tXYZ);
-		CCError_t rc = XYZ2pwm(p_ledPwmCalc, &tXYZ, 25, &pwm, dayMode); //138 => 25�C
+		CCError_t rc = XYZ2pwm(p_ledPwmCalc->XYZTyp, &tXYZ, 25, &pwm, dayMode); //138 => 25�C
 
 		if (rc != NO_ERROR)
 		{
