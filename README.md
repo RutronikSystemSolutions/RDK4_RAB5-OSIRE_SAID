@@ -9,6 +9,13 @@
 - [ModusToolbox™ software](https://www.cypress.com/products/modustoolbox-software-environment) v3.2
 - [RDK4 Rev2.](https://www.rutronik24.com/product/rutronik/rdk4/20820197.html)
 
+## Software and hardware on request
+
+For any software or hardware that is listed below please get in touch with solutions@rutronik.com
+
+- The ams OSIRE® E3731i LED stripe with 20 LEDs on it. RUTRONIK Part No.: [LEDATV3196](https://www.rutronik24.com/product/ams_osram/osire_e3731i_ledstripe/22814309.html)
+- The source code for the colour correction algorithms.
+
 ## Using the code example
 
 Create the project and open it using one of the following:
