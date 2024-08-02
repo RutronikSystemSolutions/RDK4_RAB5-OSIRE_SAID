@@ -9,6 +9,10 @@
 - [ModusToolbox™ software](https://www.cypress.com/products/modustoolbox-software-environment) v3.2
 - [RDK4 Rev2.](https://www.rutronik24.com/product/rutronik/rdk4/20820197.html)
 
+## Supported toolchains (make variable 'TOOLCHAIN')
+
+- GNU Arm&reg; Embedded Compiler v11.3.1 (`GCC_ARM`) - Default value of `TOOLCHAIN`
+
 ## Software and hardware on request
 
 For any software or hardware that is listed below please get in touch with solutions@rutronik.com
