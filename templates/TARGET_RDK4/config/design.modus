@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration app="BACKEND" formatVersion="14" lastSavedWith="Configurator Backend" lastSavedWithVersion="3.20.0" toolsPackage="ModusToolbox 3.2.0" xmlns="http://cypress.com/xsd/cydesignfile_v5">
+<Configuration app="BACKEND" formatVersion="14" lastSavedWith="Configurator Backend" lastSavedWithVersion="3.50.0" toolsPackage="ModusToolbox 3.5.0" xmlns="http://cypress.com/xsd/cydesignfile_v5">
     <Devices>
         <Device mpn="CY8C4149AZE-S598">
             <BlockConfig>
@@ -574,8 +574,6 @@
                         </Aliases>
                     </Block>
                     <Parameters>
-                        <Param id="CapSenseConfigurator" value="0"/>
-                        <Param id="CapSenseTuner" value="0"/>
                         <Param id="chipId" value="0"/>
                         <Param id="chipOffset" value="0"/>
                         <Param id="commMaster" value="false"/>
